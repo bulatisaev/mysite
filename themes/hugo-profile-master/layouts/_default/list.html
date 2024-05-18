@@ -1,48 +1,32 @@
-{{ define "head" }}
-<meta name="description" content="{{ .Title }} of {{ .Site.Title }}">
-<link rel="stylesheet" href="{{ .Site.Params.staticPath }}/css/list.css" media="all">
-{{ end }}
-
-{{ define "title" }}
-{{.Title }} | {{ .Site.Title }}
-{{ end }}
-
 {{ define "main" }}
-<div class="container pt-5" id="list-page">
-    <h2 class="text-center pb-2">{{.Title}}</h2>
-    <div class="row">
-        {{ range .Paginator.Pages }}
-        <div class="col-lg-4 col-md-6 my-3">
-            <div class="card-columns">
-                <div class="card h-100">
-                    {{ if and (not (.Site.Params.listPages.disableFeaturedImage | default false)) (.Params.image) }}
-                    <div class="card-header">
-                        <a href="{{ .RelPermalink }}">
-                            <img src="{{ .Params.image }}" class="card-img-top" alt="{{ .Title }}">
-                        </a>
-                    </div>
-                    {{ end }}
-                    <div class="card-body bg-transparent p-4 shadow-sm">
-                        <a href="{{ .RelPermalink }}" class="primary-font card-title">
-                            <h5 class="card-title bg-transparent" title="{{ .Title }}">{{ .Title | truncate 25 }}</h5>
-                        </a>
-                        <div class="card-text secondary-font">
-                            <p>{{ .Summary | truncate 300}}</p>
-                        </div>
-                    </div>
-                    <div class="mt-auto post-footer bg-transparent py-3">
-                        <span class="float-start bg-transparent">{{ .Date.Format (.Site.Params.datesFormat.articleList | default "January 2, 2006") }}</span>
-                        <a href="{{ .RelPermalink }}" class="float-end btn btn-outline-info btn-sm">{{ .Site.Params.terms.read | default "Read" }}</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{ end }}
-        <div class="row justify-content-center">
-            <div class="col-auto m-3">
-                {{template "_internal/pagination.html" . }}
-            </div>
-        </div>
+<div class="prose dark:prose-invert max-w-none">
+  <h1 class="standard {{ if eq .Kind `term` }}font-italic{{ end }}">
+    {{ if eq .Kind "term" }}#{{ end }}{{- .Title -}}
+  </h1>
+  {{ range $key, $val := (.Paginator 10).Pages }}
+  <div class="">
+    <div
+      class="rounded hover:bg-gray-400 dark:hover:bg-darker flex flex-row items-center justify-start accordion mt-0 mb-0 p-2 {{ if eq $key 0 }}active{{ end }}"
+    >
+      <i
+        onclick="expandAccordion(this)"
+        class="cursor-pointer chevron p-2 mr-4 fas fa-chevron-right rounded text-blue-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700"
+      ></i>
+      <a href="{{ .Permalink | relURL }}"
+        ><h2 class="accordion m-0">{{- .Title -}}</h2></a
+      >
     </div>
+    <div
+      id="panel-item-{{ $key }}"
+      class="panel metadata-panel overflow-hidden bg-gray-200 dark:bg-dark"
+    >
+      <div class="metadata p-2">{{- partial "metadata" . -}}</div>
+    </div>
+  </div>
+  {{ end }}
+</div>
+<script src="{{ `js/accordion.js` | relURL }}"></script>
+<div class="mt-4 d-flex justify-content-center">
+  {{ template "_internal/pagination.html" . }}
 </div>
 {{ end }}
