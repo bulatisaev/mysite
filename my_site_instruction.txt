@@ -1,0 +1,1 @@
+Зайти в папку "baisaev_site\themes\aafu-master" через терминал и написать hugo server
